@@ -1,0 +1,360 @@
+/* =====================================================================
+   Tristian Walker — Design Tokens
+   colors_and_type.css
+   Include this stylesheet to inherit the full brand system.
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700;1,900&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ─── COLORS ───────────────────────────────────────────────────── */
+  /* Surfaces */
+  --bg-base:       #F8F5EF;  /* warm cream - default page */
+  --bg-surface:    #FFFFFF;  /* lifted surfaces */
+  --bg-parchment:  #FDFCF8;  /* lecture-site parchment */
+  --bg-warm:       #E6DFD6;  /* cashmere beige section bg */
+  --bg-dark:       #312D29;  /* warm dark brown for trust bars */
+  --bg-ink:        #1A1A1A;  /* deep warm near-black */
+
+  /* Accents */
+  --accent-primary: #BC744E;  /* burnt sienna - PRIMARY */
+  --accent-hover:   #A05E3D;  /* darker sienna */
+  --accent-tan:     #C4A484;  /* soft tan - secondary accent */
+  --accent-tan-hover: #A68B6F;
+  --accent-soft:    rgba(188, 116, 78, 0.12);
+  --accent-soft-tan: rgba(196, 164, 132, 0.15);
+
+  /* Text */
+  --text-main:     #2D2925;  /* near-black warm grey */
+  --text-muted:    #5C554D;  /* secondary warm grey */
+  --text-subtle:   #8B8478;  /* tertiary */
+  --text-light:    #F8F5EF;  /* on dark surfaces */
+  --text-on-dark:  #A8A196;  /* muted trust-grey on dark */
+
+  /* Semantic */
+  --success:       #2E7D32;
+  --error:         #D32F2F;
+
+  /* ─── TYPOGRAPHY ───────────────────────────────────────────────── */
+  /* World A: The Book (warm, literary) */
+  --font-heading:  'Merriweather', Georgia, 'Times New Roman', serif;
+  --font-body:     'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* World B: The Lecture (editorial, dramatic) */
+  --font-display:  'Playfair Display', Georgia, serif;
+  --font-ui:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Sizes (semantic) */
+  --fs-micro:      0.7rem;    /* 11px - eyebrow/tag */
+  --fs-label:      0.85rem;   /* 14px - UI labels */
+  --fs-body:       1rem;      /* 16–18px body */
+  --fs-body-lg:    1.15rem;
+  --fs-lede:       1.35rem;
+  --fs-h4:         1.5rem;
+  --fs-h3:         2rem;
+  --fs-h2:         3rem;
+  --fs-h1:         4.5rem;
+  --fs-hero:       clamp(3.5rem, 7vw, 5.5rem);
+  --fs-display:    clamp(5rem, 10vw, 10rem);
+
+  /* Letter spacing */
+  --tracking-tight:   -0.02em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.15em;
+  --tracking-wider:   0.3em;
+  --tracking-widest:  0.6em;
+
+  /* Line height */
+  --leading-tight:    1.1;
+  --leading-snug:     1.25;
+  --leading-normal:   1.5;
+  --leading-relaxed:  1.6;
+  --leading-loose:    1.8;
+
+  /* ─── SPACING ──────────────────────────────────────────────────── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.5rem;
+  --space-6:  2rem;
+  --space-7:  2.5rem;
+  --space-8:  3rem;
+  --space-10: 4rem;
+  --space-12: 5rem;
+  --space-16: 8rem;
+
+  /* ─── RADII ────────────────────────────────────────────────────── */
+  --radius-sm:  6px;     /* buttons, inputs */
+  --radius-md:  12px;    /* standard cards */
+  --radius-lg:  16px;    /* feature cards */
+  --radius-xl:  24px;
+  --radius-2xl: 48px;    /* large glass panels */
+  --radius-3xl: 64px;    /* hero editorial panels */
+  --radius-pill: 100px;
+  --radius-full: 9999px;
+
+  /* ─── SHADOWS ──────────────────────────────────────────────────── */
+  --shadow-sm:   0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md:   0 10px 30px rgba(0,0,0,0.08);
+  --shadow-lg:   0 20px 40px rgba(0,0,0,0.12);
+  --shadow-xl:   0 40px 80px rgba(0,0,0,0.12);
+  --shadow-book: 0 30px 60px rgba(0,0,0,0.15);
+  --shadow-btn:  0 4px 12px rgba(188,116,78,0.25);
+  --shadow-btn-hover: 0 6px 16px rgba(188,116,78,0.35);
+
+  /* ─── EASING ───────────────────────────────────────────────────── */
+  --ease-standard: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ease-levitate: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s var(--ease-standard);
+  --transition-base: all 0.3s var(--ease-standard);
+  --transition-slow: all 0.6s var(--ease-levitate);
+}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: var(--leading-relaxed);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; transition: var(--transition-base); }
+a:hover { color: var(--accent-primary); }
+
+/* =====================================================================
+   SEMANTIC TYPOGRAPHY
+   ===================================================================== */
+
+/* Headings — default World A (Merriweather) */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: var(--leading-snug);
+  margin: 0 0 var(--space-5) 0;
+}
+h1 { font-size: var(--fs-h1); line-height: var(--leading-tight); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+
+p  { margin: 0 0 var(--space-5) 0; color: var(--text-main); }
+
+/* World-A hero ("The Book") */
+.h1-hero {
+  font-family: var(--font-heading);
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--space-2) 0;
+}
+
+/* World-B display ("The Lecture") */
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--fs-display);
+  letter-spacing: var(--tracking-tight);
+  line-height: 0.85;
+}
+
+/* Italic-inside-serif — the brand's signature move */
+.accent-italic {
+  font-style: italic;
+  font-weight: inherit;
+  color: var(--accent-primary);
+}
+
+/* Eyebrow / tag label — ALL CAPS, tracked */
+.eyebrow, .tagline {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--fs-micro);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--accent-primary);
+  margin-bottom: var(--space-4);
+}
+.eyebrow-wide  { letter-spacing: var(--tracking-wider); }
+.eyebrow-widest { letter-spacing: var(--tracking-widest); }
+.eyebrow-muted { color: var(--text-muted); }
+
+/* Credential line with hairlines */
+.creds {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.creds::before, .creds::after {
+  content: "";
+  height: 1px;
+  width: 30px;
+  background: var(--accent-primary);
+  opacity: 0.5;
+}
+
+/* Pull-quote / lede */
+.lede {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lede);
+  font-style: italic;
+  line-height: var(--leading-snug);
+  color: var(--accent-primary);
+}
+
+/* Mono (light use) */
+code, pre, .mono {
+  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.9em;
+}
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 1rem 2.25rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent-primary);
+  color: #fff;
+  box-shadow: var(--shadow-btn);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn-hover);
+}
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+.btn-ghost:hover { color: var(--accent-primary); }
+.btn-sm { padding: 0.5rem 1.25rem; font-size: 0.85rem; }
+
+/* =====================================================================
+   INPUTS
+   ===================================================================== */
+.input-field {
+  padding: 1rem 1.5rem;
+  border: 1.5px solid #ddd;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: #fff;
+  transition: var(--transition-base);
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* =====================================================================
+   CARDS
+   ===================================================================== */
+.card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: var(--transition-slow);
+}
+.card.levitate:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-xl);
+}
+.card-glass {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--accent-soft-tan);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-12);
+  box-shadow: 0 50px 100px rgba(0,0,0,0.1);
+}
+
+/* =====================================================================
+   UTILITIES
+   ===================================================================== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+.container-narrow { max-width: 800px; margin: 0 auto; padding: 0 var(--space-6); }
+.section { padding: var(--space-16) 0; }
+.text-center { text-align: center; }
+.text-balance { text-wrap: balance; }
+.text-pretty { text-wrap: pretty; }
+
+.hairline {
+  display: inline-block;
+  height: 1px;
+  width: 48px;
+  background: var(--accent-primary);
+  opacity: 0.5;
+  vertical-align: middle;
+}
+
+.dot-grid {
+  background-image: radial-gradient(#dcdcdc 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.dot-grid-dark {
+  background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* =====================================================================
+   THEMES
+   ===================================================================== */
+.theme-book {
+  --font-heading: 'Merriweather', serif;
+  --font-body: 'Lato', sans-serif;
+  background: var(--bg-base);
+}
+.theme-lecture {
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  background: var(--bg-parchment);
+}
+.theme-dark {
+  background: var(--bg-ink);
+  color: var(--text-light);
+}
+.theme-dark h1, .theme-dark h2, .theme-dark h3, .theme-dark h4 { color: var(--text-light); }

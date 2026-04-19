@@ -1,0 +1,24 @@
+# Private / non-deployable
+uploads/
+
+# Local + editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Save-Page-As artifacts
+*_files/
+*.html_files/
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# Claude tooling
+.claude/settings.local.json
+
+# OneDrive sync bits
+.~lock.*
+.tmp.drivedownload/

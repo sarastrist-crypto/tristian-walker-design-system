@@ -1,0 +1,31 @@
+/* Shared preview-card base */
+@import url('../colors_and_type.css');
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg-base);
+  font-family: var(--font-body);
+  color: var(--text-main);
+  overflow: hidden;
+}
+.card-root {
+  width: 700px;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  background: var(--bg-base);
+}
+.swatch { border-radius: 8px; }
+.mono-label {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.mini-eyebrow {
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

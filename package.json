@@ -1,0 +1,16 @@
+{
+  "name": "tristian-walker-design-system",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Tristian Walker brand design system and UI kit.",
+  "scripts": {
+    "start": "http-server . -p 8765 -c-1 --silent -a 127.0.0.1",
+    "preview": "http-server . -p 8765 -c-1 --silent -a 127.0.0.1"
+  },
+  "devDependencies": {
+    "http-server": "14.1.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

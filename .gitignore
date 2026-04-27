@@ -15,9 +15,21 @@ Thumbs.db
 node_modules/
 npm-debug.log*
 yarn-error.log
+dist/
+.vite/
+coverage/
+
+# Env files (never commit secrets)
+.env
+.env.local
+.env.*.local
 
 # Claude tooling
 .claude/settings.local.json
+.claude/worktrees/
+
+# Remotion render output
+remotion/out/
 
 # OneDrive sync bits
 .~lock.*

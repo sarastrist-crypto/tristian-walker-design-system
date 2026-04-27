@@ -1,0 +1,4 @@
+/* Re-export the brand tokens from the design system at repo root.
+   Vite's CSS resolver can follow this relative path, so token edits in
+   colors_and_type.css propagate without a copy step. */
+@import url("../../../colors_and_type.css");

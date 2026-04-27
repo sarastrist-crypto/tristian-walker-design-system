@@ -1,0 +1,175 @@
+import { useState, type FormEvent } from "react";
+import { Eyebrow } from "./Eyebrow";
+import { responseSchema } from "@/lib/validators";
+import { env } from "@/lib/env";
+
+type Status = "idle" | "submitting" | "ok" | "error";
+
+const READING_STATUSES = [
+  { value: "just_started", label: "Just started" },
+  { value: "mid_book", label: "Mid-book" },
+  { value: "finished", label: "Finished" },
+  { value: "came_back", label: "Came back to it" },
+];
+
+export function ResponseForm() {
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("submitting");
+    setErrorMsg(null);
+
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      first_name: String(fd.get("first_name") ?? "").trim(),
+      city: String(fd.get("city") ?? "").trim(),
+      role_context: String(fd.get("role_context") ?? "").trim(),
+      reading_status: String(fd.get("reading_status") ?? ""),
+      question_id: String(fd.get("question_id") ?? "default"),
+      response_text: String(fd.get("response_text") ?? "").trim(),
+      consent_publish: fd.get("consent_publish") === "on",
+      email: String(fd.get("email") ?? "").trim(),
+      website: String(fd.get("website") ?? ""),
+    };
+
+    const parsed = responseSchema.safeParse(payload);
+    if (!parsed.success) {
+      setStatus("error");
+      setErrorMsg("Please check the form — some fields look off.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${env.VITE_API_BASE}/responses`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus("ok");
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+      setErrorMsg("Something went wrong sending that. Tristian still wants to hear from you — try again in a moment.");
+    }
+  }
+
+  if (status === "ok") {
+    return (
+      <section id="respond" className="bg-base px-6 py-24 sm:py-32">
+        <div className="max-w-narrative mx-auto text-center fade-up">
+          <Eyebrow>Received</Eyebrow>
+          <h2 className="mt-6 font-heading text-3xl sm:text-4xl font-light text-fg leading-[1.15]">
+            Thank you. <em className="text-accent italic">It will be read.</em>
+          </h2>
+          <p className="mt-4 text-fg-muted font-body">
+            Tristian reads every one of these. If yours is published anywhere, you'll see it first.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="respond" className="bg-base px-6 py-24 sm:py-32 border-t border-black/5">
+      <div className="max-w-narrative mx-auto">
+        <div className="text-center mb-12">
+          <Eyebrow>Reader Response</Eyebrow>
+          <h2 className="mt-6 font-heading text-4xl sm:text-5xl font-light text-fg leading-[1.15]">
+            One line, <em className="text-accent italic">one moment</em>.
+          </h2>
+          <p className="mt-6 text-fg-muted text-lg font-body max-w-[50ch] mx-auto">
+            {env.VITE_RESPONSE_QUESTION}
+          </p>
+        </div>
+
+        <form onSubmit={onSubmit} className="grid gap-5">
+          <input type="hidden" name="question_id" value="default" />
+
+          {/* Honeypot — should remain empty. */}
+          <div className="honeypot" aria-hidden="true">
+            <label>
+              Website
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-5">
+            <label>
+              <span className="field-label">First name</span>
+              <input className="field" type="text" name="first_name" required maxLength={60} />
+            </label>
+            <label>
+              <span className="field-label">City <span className="opacity-60 normal-case">(optional)</span></span>
+              <input className="field" type="text" name="city" maxLength={80} />
+            </label>
+          </div>
+
+          <label>
+            <span className="field-label">Role or context <span className="opacity-60 normal-case">(optional)</span></span>
+            <input
+              className="field"
+              type="text"
+              name="role_context"
+              maxLength={200}
+              placeholder="e.g. ER nurse, second-year associate, recovery program director"
+            />
+          </label>
+
+          <label>
+            <span className="field-label">Where are you with the book?</span>
+            <select className="field" name="reading_status" required defaultValue="">
+              <option value="" disabled>Choose one</option>
+              {READING_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            <span className="field-label">Your response</span>
+            <textarea
+              className="field min-h-[180px]"
+              name="response_text"
+              required
+              maxLength={4000}
+              rows={6}
+            />
+          </label>
+
+          <label>
+            <span className="field-label">Email <span className="opacity-60 normal-case">(optional — only if Tristian should reply)</span></span>
+            <input className="field" type="email" name="email" maxLength={120} />
+          </label>
+
+          <label className="flex items-start gap-3 text-sm text-fg-muted font-body">
+            <input
+              type="checkbox"
+              name="consent_publish"
+              className="mt-1 accent-[var(--accent-primary)]"
+            />
+            <span>
+              Tristian can use this on his website. He'll send it back before publishing.
+            </span>
+          </label>
+
+          {errorMsg && (
+            <p className="text-sm" style={{ color: "var(--error)" }}>{errorMsg}</p>
+          )}
+
+          <div className="mt-2">
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={status === "submitting"}
+            >
+              {status === "submitting" ? "Sending…" : "Send your response"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  );
+}

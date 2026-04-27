@@ -1,0 +1,32 @@
+{
+  "name": "the-quiet-line-remotion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Remotion video pipeline for The Quiet Line — hero loop and social cuts.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:hero": "remotion render KitchenScene-hero ../portal/public/video/kitchen-loop.mp4 --codec=h264",
+    "render:hero:webm": "remotion render KitchenScene-hero ../portal/public/video/kitchen-loop.webm --codec=vp9",
+    "render:poster": "remotion still KitchenScene-hero --frame=0 ../portal/public/video/kitchen-poster.jpg",
+    "render:9x16": "remotion render KitchenScene-9x16 out/social/kitchen-9x16.mp4 --codec=h264",
+    "render:1x1": "remotion render KitchenScene-1x1 out/social/kitchen-1x1.mp4 --codec=h264",
+    "render:16x9": "remotion render KitchenScene-16x9 out/social/kitchen-16x9.mp4 --codec=h264"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.250",
+    "@remotion/google-fonts": "^4.0.250",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.250",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

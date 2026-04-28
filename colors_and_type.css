@@ -106,9 +106,31 @@
   /* ─── EASING ───────────────────────────────────────────────────── */
   --ease-standard: cubic-bezier(0.25, 0.8, 0.25, 1);
   --ease-levitate: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emerge:   cubic-bezier(0.22, 1, 0.36, 1);  /* slow settle for entrance reveals */
   --transition-fast: all 0.2s var(--ease-standard);
   --transition-base: all 0.3s var(--ease-standard);
   --transition-slow: all 0.6s var(--ease-levitate);
+
+  /* ─── LAYERED DEPTH SHADOWS ────────────────────────────────────── */
+  /* Two-layer ambient + diffuse, warm-tinted toward sienna so the lift
+     reads as warmth rather than a hard drop. */
+  --shadow-depth-1:
+      0 1px 2px rgba(45, 41, 37, 0.06),
+      0 8px 24px rgba(45, 41, 37, 0.06);
+  --shadow-depth-2:
+      0 2px 4px rgba(45, 41, 37, 0.06),
+      0 18px 40px rgba(45, 41, 37, 0.10);
+  --shadow-depth-3:
+      0 4px 8px rgba(45, 41, 37, 0.08),
+      0 36px 72px rgba(45, 41, 37, 0.14);
+  --shadow-glow-sienna:
+      0 8px 28px rgba(188, 116, 78, 0.22),
+      0 0 0 1px rgba(188, 116, 78, 0.10);
+
+  /* ─── ATMOSPHERIC GRADIENTS ────────────────────────────────────── */
+  --bg-sunrise:    radial-gradient(ellipse at top, rgba(188,116,78,0.16) 0%, transparent 60%);
+  --bg-vignette:   radial-gradient(ellipse at center, transparent 55%, rgba(26,26,26,0.22) 100%);
+  --bg-cream-wash: linear-gradient(180deg, var(--bg-parchment) 0%, var(--bg-base) 100%);
 }
 
 /* =====================================================================
@@ -472,5 +494,128 @@ body::before {
   ::view-transition-new(root) {
     animation-duration: 320ms;
     animation-timing-function: var(--ease-levitate);
+  }
+}
+
+/* =====================================================================
+   DEPTH UTILITIES — additive layered shadows
+   ===================================================================== */
+.depth-1 { box-shadow: var(--shadow-depth-1); }
+.depth-2 { box-shadow: var(--shadow-depth-2); }
+.depth-3 { box-shadow: var(--shadow-depth-3); }
+.glow-sienna { box-shadow: var(--shadow-glow-sienna); }
+
+/* =====================================================================
+   ATMOSPHERE — section-scoped warm light & vignette
+   Applied via ::after so the host element keeps its own background.
+   Sits above background, below content (z-index:0 with content :z-2).
+   ===================================================================== */
+.atmosphere { position: relative; }
+.atmosphere > * { position: relative; z-index: 2; }
+.atmosphere::after {
+  content: ""; position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.atmosphere-sunrise::after { background: var(--bg-sunrise); }
+.atmosphere-vignette::after { background: var(--bg-vignette); }
+
+/* =====================================================================
+   HAIRLINE-DRAW — animated entrance for the existing .hairline element
+   Defaults to no animation; JS adds .is-revealing then .is-visible.
+   Where animation-timeline: view() is supported, the same scaleX
+   tween runs scroll-driven with no JS. CSS-first, JS is the fallback.
+   ===================================================================== */
+.hairline-draw {
+  display: inline-block;
+  height: 1px;
+  width: 64px;
+  background: var(--accent-primary);
+  opacity: 0.55;
+  vertical-align: middle;
+  transform-origin: left center;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes tw-hairline {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 0.55; }
+    }
+    .hairline-draw {
+      animation: tw-hairline linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}
+
+/* =====================================================================
+   SCROLL-REVEAL — JS fallback for browsers without animation-timeline.
+   The .js-reveal class is added to <html> by a tiny inline head script
+   ONLY when (a) the user does not prefer reduced motion and (b) native
+   animation-timeline is not supported. That gate prevents FOUC and
+   double-animation, and means non-JS / reduced-motion / modern
+   browsers see the static end-state with zero JS dependency.
+   ===================================================================== */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 900ms var(--ease-emerge), transform 900ms var(--ease-emerge);
+  will-change: opacity, transform;
+}
+.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.js-reveal .hairline-draw {
+  transform: scaleX(0);
+  opacity: 0;
+  transition: transform 900ms var(--ease-emerge), opacity 900ms var(--ease-emerge);
+}
+.js-reveal .hairline-draw.is-visible {
+  transform: scaleX(1);
+  opacity: 0.55;
+}
+
+/* =====================================================================
+   DROPCAP — literary first-letter for opening paragraphs
+   Mirrors the portal's chapter-reader dropcap so the move belongs to
+   the design system, not just one app. Apply to a <p> with .dropcap.
+   ===================================================================== */
+.dropcap::first-letter {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 4.2em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.08em 0.12em 0 0;
+  margin-right: 0.04em;
+  color: var(--accent-primary);
+  font-style: normal;
+}
+
+/* =====================================================================
+   ACCENT-ITALIC GLOW — slow opacity breathing on the brand's italic
+   accent (Merriweather/Playfair italic phrase inside a serif heading).
+   Stays sienna; never colour-shifts. Reduced-motion safe.
+   ===================================================================== */
+@keyframes tw-accent-breath {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.78; }
+}
+.accent-italic.glow,
+.bk-h2 em.glow,
+.bk-hero h1 em.glow,
+.lc-display em.glow,
+.lc-hero h1 em.glow {
+  animation: tw-accent-breath 9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .accent-italic.glow,
+  .bk-h2 em.glow,
+  .bk-hero h1 em.glow,
+  .lc-display em.glow,
+  .lc-hero h1 em.glow {
+    animation: none;
   }
 }

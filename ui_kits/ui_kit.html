@@ -19,6 +19,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../colors_and_type.css">
+<script>
+  /* Reveal-gate: synchronous, runs before first paint. Adds .js-reveal
+     to <html> only when the IntersectionObserver path will actually
+     run — i.e. user does not prefer reduced motion AND the browser
+     does not natively support animation-timeline (which the CSS-only
+     reveal already handles). Avoids FOUC and double-animation. */
+  (function () {
+    try {
+      var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var nat = window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()');
+      if (!rm && !nat) document.documentElement.classList.add('js-reveal');
+    } catch (e) { /* fail-open: leave content visible */ }
+  })();
+</script>
 <style>
 /* ============ UI-Kit chrome ============ */
 .kit-chrome {
@@ -979,9 +993,10 @@ summary:focus-visible {
   <section class="bk-hero">
     <div class="bk-hero-grid">
       <div>
-        <div class="bk-eyebrow">A Book by Tristian Walker · Available Now</div>
-        <h1>Some careers don't collapse —<br/>they <em>quietly drift</em>.</h1>
-        <p class="lede">A book for the operator who still shows up — and can't remember the last meeting that moved her. Read it in an evening; spend a season coming back from the line you didn't know you crossed.</p>
+        <div class="bk-eyebrow" data-reveal>A Book by Tristian Walker · Available Now</div>
+        <span class="hairline-draw" aria-hidden="true" style="margin-bottom:18px;"></span>
+        <h1 data-reveal>Some careers don't collapse —<br/>they <em class="glow">quietly drift</em>.</h1>
+        <p class="lede" data-reveal data-reveal-stagger="120">A book for the operator who still shows up — and can't remember the last meeting that moved her. Read it in an evening; spend a season coming back from the line you didn't know you crossed.</p>
         <div class="bk-cta-row">
           <a class="btn btn-primary" href="#chapter">Read Chapter One, Free</a>
           <a class="btn btn-outline" data-goto="lecture" href="#lecture">See the Lecture →</a>
@@ -1275,8 +1290,8 @@ summary:focus-visible {
 
   <section class="lc-hero">
     <div class="lc-hero-inner">
-      <div class="lc-eyebrow">A Lecture Residency · 2026</div>
-      <h1>The Quiet <em>Line</em>.</h1>
+      <div class="lc-eyebrow" data-reveal>A Lecture Residency · 2026</div>
+      <h1 data-reveal data-reveal-stagger="100">The Quiet <em class="glow">Line</em>.</h1>
       <p class="lc-hero-lede">An evening on professional drift, natural authority, and the character work that holds a career together. Limited seats. One city at a time.</p>
       <div class="lc-creds">
         <span class="bar"></span>
@@ -1293,6 +1308,7 @@ summary:focus-visible {
   <section class="lc-section">
     <div class="inner">
       <h2 class="lc-display">Three signals that <em>you've crossed it</em>.</h2>
+      <div style="text-align:center;margin-top:-12px;margin-bottom:12px;"><span class="hairline-draw" aria-hidden="true" style="width:96px;"></span></div>
       <div class="lc-glass-grid">
         <div class="lc-glass">
           <div class="signal"><span>Signal 01</span><span>—</span></div>
@@ -1316,6 +1332,7 @@ summary:focus-visible {
   <section class="lc-dark">
     <div class="inner">
       <h2 class="lc-display">The lecture in <em>three segments</em>.</h2>
+      <div style="text-align:center;margin-top:-12px;margin-bottom:12px;"><span class="hairline-draw" aria-hidden="true" style="width:96px;background:var(--accent-tan);opacity:0.7;"></span></div>
       <div class="lc-numbered">
         <div class="lc-num-item">
           <div class="idx">01</div>
@@ -1762,6 +1779,8 @@ summary:focus-visible {
   });
 })();
 </script>
+
+<script src="../interactions.js" defer></script>
 
 </body>
 </html>

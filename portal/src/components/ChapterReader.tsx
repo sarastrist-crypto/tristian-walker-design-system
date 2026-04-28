@@ -95,8 +95,8 @@ export function ChapterReader() {
           <span className="ornament" aria-hidden="true" />
           <p className="text-muted font-body text-base">
             End of Chapter 1.{" "}
-            <a href="#get-the-book" className="text-accent underline-offset-4 hover:underline">
-              Get the rest of the book →
+            <a href="#respond" className="text-accent underline-offset-4 hover:underline">
+              Send a response, then take the book →
             </a>
           </p>
         </div>

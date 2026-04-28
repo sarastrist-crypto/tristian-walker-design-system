@@ -106,6 +106,25 @@ Deno.serve(async (req) => {
 
   const ip_hash = await hashIp(ip);
 
+  // The responses.reader_email column has a FK to readers.email, so upsert
+  // the reader first when an email is provided. This makes the form
+  // self-sufficient — readers don't have to come from BookFunnel first.
+  if (parsed.data.email) {
+    const { error: readerError } = await admin.from("readers").upsert(
+      {
+        email: parsed.data.email,
+        city: parsed.data.city || null,
+        source: "portal_response",
+      },
+      { onConflict: "email", ignoreDuplicates: false },
+    );
+    if (readerError) {
+      console.error("reader upsert error:", readerError);
+      // Non-fatal — fall through and try the response insert with email = null
+      // so we still capture the response text.
+    }
+  }
+
   const { error } = await admin.from("responses").insert({
     first_name: parsed.data.first_name,
     city: parsed.data.city || null,

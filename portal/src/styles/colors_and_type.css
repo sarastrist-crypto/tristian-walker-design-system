@@ -106,16 +106,45 @@
   /* ─── EASING ───────────────────────────────────────────────────── */
   --ease-standard: cubic-bezier(0.25, 0.8, 0.25, 1);
   --ease-levitate: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-emerge:   cubic-bezier(0.22, 1, 0.36, 1);  /* slow settle for entrance reveals */
   --transition-fast: all 0.2s var(--ease-standard);
   --transition-base: all 0.3s var(--ease-standard);
   --transition-slow: all 0.6s var(--ease-levitate);
+
+  /* ─── LAYERED DEPTH SHADOWS ────────────────────────────────────── */
+  /* Two-layer ambient + diffuse, warm-tinted toward sienna so the lift
+     reads as warmth rather than a hard drop. */
+  --shadow-depth-1:
+      0 1px 2px rgba(45, 41, 37, 0.06),
+      0 8px 24px rgba(45, 41, 37, 0.06);
+  --shadow-depth-2:
+      0 2px 4px rgba(45, 41, 37, 0.06),
+      0 18px 40px rgba(45, 41, 37, 0.10);
+  --shadow-depth-3:
+      0 4px 8px rgba(45, 41, 37, 0.08),
+      0 36px 72px rgba(45, 41, 37, 0.14);
+  --shadow-glow-sienna:
+      0 8px 28px rgba(188, 116, 78, 0.22),
+      0 0 0 1px rgba(188, 116, 78, 0.10);
+
+  /* ─── ATMOSPHERIC GRADIENTS ────────────────────────────────────── */
+  --bg-sunrise:    radial-gradient(ellipse at top, rgba(188,116,78,0.16) 0%, transparent 60%);
+  --bg-vignette:   radial-gradient(ellipse at center, transparent 55%, rgba(26,26,26,0.22) 100%);
+  --bg-cream-wash: linear-gradient(180deg, var(--bg-parchment) 0%, var(--bg-base) 100%);
 }
 
 /* =====================================================================
    BASE
    ===================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Sticky header is ~64px; give anchor jumps a generous offset for breathing room */
+  scroll-padding-top: 96px;
+  /* Warm-palette scrollbar (Firefox) */
+  scrollbar-color: var(--accent-tan) var(--bg-warm);
+  scrollbar-width: thin;
+}
 body {
   margin: 0;
   background: var(--bg-base);
@@ -126,6 +155,16 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+/* Webkit scrollbar — subtle, matches the warm palette */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg-warm); }
+::-webkit-scrollbar-thumb {
+  background: var(--accent-tan);
+  border: 3px solid var(--bg-warm);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-tan-hover); }
 
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; transition: var(--transition-base); }
@@ -142,13 +181,16 @@ h1, h2, h3, h4 {
   color: var(--text-main);
   line-height: var(--leading-snug);
   margin: 0 0 var(--space-5) 0;
+  /* Designer-grade headline polish — modern browsers only, harmless elsewhere */
+  text-wrap: balance;
+  font-optical-sizing: auto;
 }
 h1 { font-size: var(--fs-h1); line-height: var(--leading-tight); }
 h2 { font-size: var(--fs-h2); }
 h3 { font-size: var(--fs-h3); }
 h4 { font-size: var(--fs-h4); }
 
-p  { margin: 0 0 var(--space-5) 0; color: var(--text-main); }
+p  { margin: 0 0 var(--space-5) 0; color: var(--text-main); text-wrap: pretty; }
 
 /* World-A hero ("The Book") */
 .h1-hero {
@@ -164,8 +206,10 @@ p  { margin: 0 0 var(--space-5) 0; color: var(--text-main); }
   font-family: var(--font-display);
   font-weight: 900;
   font-size: var(--fs-display);
-  letter-spacing: var(--tracking-tight);
-  line-height: 0.85;
+  letter-spacing: -0.025em;
+  line-height: 0.9;
+  font-optical-sizing: auto;
+  text-wrap: balance;
 }
 
 /* Italic-inside-serif — the brand's signature move */
@@ -221,7 +265,7 @@ p  { margin: 0 0 var(--space-5) 0; color: var(--text-main); }
 
 /* Mono (light use) */
 code, pre, .mono {
-  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   font-size: 0.9em;
 }
 
@@ -285,8 +329,50 @@ code, pre, .mono {
 .input-field:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  /* Layered ring: cream gap + solid sienna halo — visible on every surface */
+  box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent-primary);
 }
+
+/* =====================================================================
+   GLOBAL FOCUS-VISIBLE — consistent ring on every interactive control
+   ===================================================================== */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* =====================================================================
+   SKIP LINK — visible on focus only
+   ===================================================================== */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  background: var(--accent-primary);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: top 0.2s var(--ease-standard);
+}
+.skip-link:focus {
+  top: 16px;
+  color: #fff;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* =====================================================================
+   BRAND ::SELECTION
+   ===================================================================== */
+::selection { background: var(--accent-soft); color: var(--text-main); }
 
 /* =====================================================================
    CARDS
@@ -358,3 +444,178 @@ code, pre, .mono {
   color: var(--text-light);
 }
 .theme-dark h1, .theme-dark h2, .theme-dark h3, .theme-dark h4 { color: var(--text-light); }
+
+/* =====================================================================
+   PAPER-GRAIN OVERLAY — subtle tactile texture matching the brand
+   Sits behind content (z-index:-1) inside body's stacking context so
+   it never blocks pointer or break composited screenshots. The
+   isolation on body keeps it scoped above body's bg, below content.
+   ===================================================================== */
+body { isolation: isolate; }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.16  0 0 0 0 0.14  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+@media (prefers-reduced-motion: reduce) { body::before { display: none; } }
+
+/* =====================================================================
+   SCROLL-DRIVEN ENTRANCE REVEALS — pure CSS, gracefully degrades
+   ===================================================================== */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes tw-rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .bk-h2,
+    .bk-card,
+    .bk-journey-panel,
+    .bk-review,
+    .lc-glass,
+    .lc-num-item,
+    .lc-display {
+      animation: tw-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+  }
+}
+
+/* =====================================================================
+   VIEW TRANSITIONS — soft cross-fade between Book and Lecture worlds
+   ===================================================================== */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 320ms;
+    animation-timing-function: var(--ease-levitate);
+  }
+}
+
+/* =====================================================================
+   DEPTH UTILITIES — additive layered shadows
+   ===================================================================== */
+.depth-1 { box-shadow: var(--shadow-depth-1); }
+.depth-2 { box-shadow: var(--shadow-depth-2); }
+.depth-3 { box-shadow: var(--shadow-depth-3); }
+.glow-sienna { box-shadow: var(--shadow-glow-sienna); }
+
+/* =====================================================================
+   ATMOSPHERE — section-scoped warm light & vignette
+   Applied via ::after so the host element keeps its own background.
+   Sits above background, below content (z-index:0 with content :z-2).
+   ===================================================================== */
+.atmosphere { position: relative; }
+.atmosphere > * { position: relative; z-index: 2; }
+.atmosphere::after {
+  content: ""; position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.atmosphere-sunrise::after { background: var(--bg-sunrise); }
+.atmosphere-vignette::after { background: var(--bg-vignette); }
+
+/* =====================================================================
+   HAIRLINE-DRAW — animated entrance for the existing .hairline element
+   Defaults to no animation; JS adds .is-revealing then .is-visible.
+   Where animation-timeline: view() is supported, the same scaleX
+   tween runs scroll-driven with no JS. CSS-first, JS is the fallback.
+   ===================================================================== */
+.hairline-draw {
+  display: inline-block;
+  height: 1px;
+  width: 64px;
+  background: var(--accent-primary);
+  opacity: 0.55;
+  vertical-align: middle;
+  transform-origin: left center;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes tw-hairline {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 0.55; }
+    }
+    .hairline-draw {
+      animation: tw-hairline linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 25%;
+    }
+  }
+}
+
+/* =====================================================================
+   SCROLL-REVEAL — JS fallback for browsers without animation-timeline.
+   The .js-reveal class is added to <html> by a tiny inline head script
+   ONLY when (a) the user does not prefer reduced motion and (b) native
+   animation-timeline is not supported. That gate prevents FOUC and
+   double-animation, and means non-JS / reduced-motion / modern
+   browsers see the static end-state with zero JS dependency.
+   ===================================================================== */
+.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 900ms var(--ease-emerge), transform 900ms var(--ease-emerge);
+  will-change: opacity, transform;
+}
+.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.js-reveal .hairline-draw {
+  transform: scaleX(0);
+  opacity: 0;
+  transition: transform 900ms var(--ease-emerge), opacity 900ms var(--ease-emerge);
+}
+.js-reveal .hairline-draw.is-visible {
+  transform: scaleX(1);
+  opacity: 0.55;
+}
+
+/* =====================================================================
+   DROPCAP — literary first-letter for opening paragraphs
+   Mirrors the portal's chapter-reader dropcap so the move belongs to
+   the design system, not just one app. Apply to a <p> with .dropcap.
+   ===================================================================== */
+.dropcap::first-letter {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 4.2em;
+  line-height: 0.85;
+  float: left;
+  padding: 0.08em 0.12em 0 0;
+  margin-right: 0.04em;
+  color: var(--accent-primary);
+  font-style: normal;
+}
+
+/* =====================================================================
+   ACCENT-ITALIC GLOW — slow opacity breathing on the brand's italic
+   accent (Merriweather/Playfair italic phrase inside a serif heading).
+   Stays sienna; never colour-shifts. Reduced-motion safe.
+   ===================================================================== */
+@keyframes tw-accent-breath {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.78; }
+}
+.accent-italic.glow,
+.bk-h2 em.glow,
+.bk-hero h1 em.glow,
+.lc-display em.glow,
+.lc-hero h1 em.glow {
+  animation: tw-accent-breath 9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .accent-italic.glow,
+  .bk-h2 em.glow,
+  .bk-hero h1 em.glow,
+  .lc-display em.glow,
+  .lc-hero h1 em.glow {
+    animation: none;
+  }
+}

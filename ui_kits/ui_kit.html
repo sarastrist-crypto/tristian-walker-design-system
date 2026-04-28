@@ -38,7 +38,7 @@
   white-space: nowrap;
 }
 .kit-wordmark span { color: var(--accent-primary); }
-.kit-nav { display: flex; gap: 4px; margin-left: auto; }
+.kit-nav { display: flex; gap: 4px; margin-left: auto; position: relative; }
 .kit-nav button {
   background: transparent;
   border: 1px solid transparent;
@@ -51,11 +51,30 @@
   padding: 8px 18px;
   border-radius: 100px;
   cursor: pointer;
-  transition: var(--transition-base);
+  transition: color 0.3s var(--ease-standard);
   white-space: nowrap;
+  position: relative;
+  z-index: 1;
 }
 .kit-nav button:hover { color: var(--accent-primary); }
-.kit-nav button.active { background: var(--accent-primary); color: #fff; }
+.kit-nav button.active { color: #fff; }
+/* Sliding pill indicator behind the active tab */
+.kit-nav-indicator {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: 100px;
+  transform: translateX(0);
+  width: 0;
+  transition: transform 0.45s var(--ease-levitate), width 0.45s var(--ease-levitate);
+  z-index: 0;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(188, 116, 78, 0.3);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kit-nav-indicator { transition: none; }
+}
 .panel { display: none; }
 .panel.active { display: block; }
 
@@ -483,9 +502,10 @@
 }
 .bk-footer-grid .wm-col .wm { font-family: var(--font-body); font-weight: 700; color: #fff; font-size: 16px; letter-spacing: 0.2em; text-transform: uppercase; }
 .bk-footer-grid .wm-col p { margin-top: 14px; font-size: 13px; line-height: 1.7; color: var(--text-on-dark); max-width: 340px; font-family: var(--font-heading); font-style: italic; }
-.bk-footer-grid h5 {
+.bk-footer-grid h3 {
   font-family: var(--font-body); font-size: 10px; font-weight: 700;
-  letter-spacing: 0.3em; text-transform: uppercase; color: #fff; margin: 0 0 14px;
+  letter-spacing: 0.3em; text-transform: uppercase; color: #fff;
+  line-height: 1.2; margin: 0 0 14px;
 }
 .bk-footer-grid ul { list-style: none; padding: 0; margin: 0; }
 .bk-footer-grid li { margin-bottom: 10px; }
@@ -596,8 +616,14 @@
   object-fit: cover;
   display: block;
   transition: transform 1.2s var(--ease-levitate);
+  will-change: transform;
 }
 .bk-journey-panel:hover .bk-journey-img img { transform: scale(1.03); }
+/* Centered section heading + lede helpers (extracted from inline styles) */
+.bk-section-head { text-align: center; }
+.bk-section-head .bk-h2 { max-width: 780px; margin: 0 auto 20px; }
+.bk-section-head .bk-h2.tight { margin-bottom: 10px; }
+.bk-section-head .bk-h2.loose { margin-bottom: 48px; max-width: 740px; }
 /* Fallbacks if an image fails to load. */
 .bk-journey-img.j1 { background: linear-gradient(160deg, #b89a7a 0%, #7a5f47 55%, #3d2f23 100%); }
 .bk-journey-img.j2 { background: linear-gradient(180deg, #b8c7d6 0%, #d6dbe0 40%, #8a8e8c 70%, #4a4947 100%); }
@@ -937,6 +963,8 @@ summary:focus-visible {
 </head>
 <body>
 
+<a href="#book" class="skip-link">Skip to content</a>
+
 <header class="kit-chrome" role="banner">
   <div class="kit-wordmark" aria-label="Tristian Walker">TRISTIAN<span> · </span>WALKER</div>
   <div class="kit-nav" role="tablist" aria-label="Design system worlds">
@@ -961,7 +989,10 @@ summary:focus-visible {
       </div>
       <div class="bk-book-stage">
         <div class="bk-book-frame">
-          <img src="../assets/quiet-line-cover.jpg" alt="The Quiet Line — a novel by Tristian Walker" class="bk-cover-art" width="833" height="1250" fetchpriority="high" decoding="async" />
+          <picture>
+            <source srcset="../assets/quiet-line-cover.webp" type="image/webp">
+            <img src="../assets/quiet-line-cover.jpg" alt="The Quiet Line — a novel by Tristian Walker" class="bk-cover-art" width="833" height="1250" fetchpriority="high" decoding="async" />
+          </picture>
         </div>
       </div>
     </div>
@@ -998,9 +1029,9 @@ summary:focus-visible {
   </section>
 
   <section class="bk-section" style="padding-top:0">
-    <div class="inner">
-      <div class="bk-eyebrow" style="text-align:center;">Inside the Book</div>
-      <h2 class="bk-h2" style="text-align:center; max-width:780px; margin:0 auto 20px;">Three segments. One <em>honest reckoning</em>.</h2>
+    <div class="inner bk-section-head">
+      <div class="bk-eyebrow">Inside the Book</div>
+      <h2 class="bk-h2">Three segments. One <em>honest reckoning</em>.</h2>
       <div class="bk-card-grid">
         <div class="bk-card">
           <div class="num">Segment 01</div>
@@ -1029,21 +1060,30 @@ summary:focus-visible {
       <div class="bk-journey-grid">
         <div class="bk-journey-panel">
           <div class="bk-journey-img j1">
-            <img src="../assets/executive-flatlay.jpg" alt="A pressed cream shirt, leather portfolio, gold watch, phone, and whiskey glass laid out on a warm wood desk." loading="lazy" decoding="async">
+            <picture>
+              <source srcset="../assets/executive-flatlay.webp" type="image/webp">
+              <img src="../assets/executive-flatlay.jpg" alt="A pressed cream shirt, leather portfolio, gold watch, phone, and whiskey glass laid out on a warm wood desk." loading="lazy" decoding="async">
+            </picture>
           </div>
           <div class="bk-journey-label">The Drift</div>
           <p>The calendar looked full. The suit was pressed. The glass was always within reach. Terrence had everything a man was supposed to want — and somewhere inside all of it, quietly, he stopped being able to feel any of it.</p>
         </div>
         <div class="bk-journey-panel">
           <div class="bk-journey-img j2">
-            <img src="../assets/reckoning-window.jpg" alt="A man in a hospital gown standing at a window, palms pressed against the glass, looking out at the world still moving without him." loading="lazy" decoding="async">
+            <picture>
+              <source srcset="../assets/reckoning-window.webp" type="image/webp">
+              <img src="../assets/reckoning-window.jpg" alt="A man in a hospital gown standing at a window, palms pressed against the glass, looking out at the world still moving without him." loading="lazy" decoding="async">
+            </picture>
           </div>
           <div class="bk-journey-label">The Collapse</div>
           <p>He woke up in a room he did not choose, breathing on a schedule he did not set. Outside the window, the world was still moving. He pressed his hands against the glass and measured the distance.</p>
         </div>
         <div class="bk-journey-panel">
           <div class="bk-journey-img j3">
-            <img src="../assets/drift-doorway.jpg" alt="A man in loungewear standing in an open front doorway in the morning light, a child's backpack hanging on the hook beside him." loading="lazy" decoding="async">
+            <picture>
+              <source srcset="../assets/drift-doorway.webp" type="image/webp">
+              <img src="../assets/drift-doorway.jpg" alt="A man in loungewear standing in an open front doorway in the morning light, a child's backpack hanging on the hook beside him." loading="lazy" decoding="async">
+            </picture>
           </div>
           <div class="bk-journey-label">The Return</div>
           <p>Return is not a moment. It is a Tuesday morning. An open door. The particular weight of a child's backpack hanging on a hook beside you. Terrence learned that survival was not the reward. What he came back to was.</p>
@@ -1054,46 +1094,46 @@ summary:focus-visible {
   </section>
 
   <section class="bk-section bk-section-warm">
-    <div class="inner">
-      <div class="bk-eyebrow" style="text-align:center;">Early Readers</div>
-      <h2 class="bk-h2" style="text-align:center; max-width:780px; margin:0 auto 10px;">What the <em>advance copies</em> said.</h2>
+    <div class="inner bk-section-head">
+      <div class="bk-eyebrow">Early Readers</div>
+      <h2 class="bk-h2 tight">What the <em>advance copies</em> said.</h2>
 
       <div class="bk-reviews-grid">
         <div class="bk-review">
-          <div class="outlet">★★★★★ · Kirkus Reviews</div>
+          <div class="outlet">★★★★★ · The Margin Review</div>
           <blockquote>"A rare book about working life that refuses both the cheerleading and the cynicism. Walker writes the way a good doctor talks — calmly, precisely, and as though he has actually seen the thing he is describing."</blockquote>
-          <div class="who">Kirkus Reviews</div>
+          <div class="who">The Margin Review</div>
           <div class="role">Starred review, March 2026</div>
         </div>
         <div class="bk-review">
-          <div class="outlet">FINANCIAL TIMES · BOOKS</div>
+          <div class="outlet">WESTCROFT QUARTERLY · BOOKS</div>
           <blockquote>"The Quiet Line names a thing most managers have felt and almost none have been willing to write down. It will be in a lot of suitcases this summer."</blockquote>
-          <div class="who">Pilita Clark</div>
-          <div class="role">Associate editor, FT Work &amp; Careers</div>
+          <div class="who">Mira C.</div>
+          <div class="role">Associate editor, Westcroft Work &amp; Careers</div>
         </div>
         <div class="bk-review">
           <div class="outlet">WORK IN PROGRESS · PODCAST</div>
           <blockquote>"I annotated the margins of my galley so aggressively my partner asked who I was fighting with. Page 87 alone is worth the cover price."</blockquote>
-          <div class="who">Adam Grant</div>
-          <div class="role">Organizational psychologist, Wharton</div>
+          <div class="who">Aiden G.</div>
+          <div class="role">Organizational psychologist, Ridgeway Business School</div>
         </div>
         <div class="bk-review">
           <div class="outlet">PRIVATE NOTE · APR 2026</div>
           <blockquote>"I gave this to three people on my leadership team before it was even bound. Two of them have quietly, productively, changed how they run their departments since."</blockquote>
-          <div class="who">Dr. Aisha N. Okafor</div>
-          <div class="role">Chief of Surgery, Johns Hopkins</div>
+          <div class="who">Dr. Avani O.</div>
+          <div class="role">Chief of Surgery, Greystone Medical Center</div>
         </div>
         <div class="bk-review">
-          <div class="outlet">THE NEXT BIG IDEA CLUB</div>
+          <div class="outlet">THE LONG-FORM SOCIETY</div>
           <blockquote>"There are career books that teach you to perform better. This one asks, more quietly, whether you've forgotten what you were performing for."</blockquote>
-          <div class="who">Rufus Griscom</div>
-          <div class="role">Founder, The Next Big Idea Club</div>
+          <div class="who">Rowan G.</div>
+          <div class="role">Founder, The Long-Form Society</div>
         </div>
         <div class="bk-review">
-          <div class="outlet">HARVARD BUSINESS REVIEW · IDEACAST</div>
+          <div class="outlet">QUARTERLY MANAGEMENT REVIEW · DIALOGUE</div>
           <blockquote>"Walker's 'motion versus movement' distinction rewired how I ran my own week inside of 48 hours. I don't say that about many books."</blockquote>
-          <div class="who">Amy Gallo</div>
-          <div class="role">Contributing editor, HBR</div>
+          <div class="who">Anya G.</div>
+          <div class="role">Contributing editor, Quarterly Management Review</div>
         </div>
       </div>
     </div>
@@ -1133,7 +1173,7 @@ summary:focus-visible {
         <div class="bk-eyebrow">About the Author</div>
         <h2 class="bk-h2">A career of leading, now a book of <em>listening</em>.</h2>
         <div class="bk-creds">Operator · Advisor · Author</div>
-        <p style="color:var(--text-muted); font-size:17px; line-height:1.8; margin-top:8px;">Tristian Walker spent eleven years as COO of two mid-sized operating companies and the four years after as a working advisor to executive teams at thirty-one organizations — most of them quietly, a few he's allowed to name: Warby Parker, the Cleveland Clinic Foundation, Patagonia Works, and the City of Austin's Office of Innovation.</p>
+        <p style="color:var(--text-muted); font-size:17px; line-height:1.8; margin-top:8px;">Tristian Walker spent eleven years as COO of two mid-sized operating companies and the four years after as a working advisor to executive teams at thirty-one organizations — most of them quietly, a handful he's been allowed to name across consumer goods, hospital systems, civic innovation offices, and a mid-cap apparel group.</p>
         <p style="color:var(--text-muted); font-size:17px; line-height:1.8; margin-top:8px;">The Quiet Line is the first book he has written for people outside his own board packets.</p>
         <div style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
           <a class="btn btn-outline" href="#bio">Read the Full Bio</a>
@@ -1144,9 +1184,9 @@ summary:focus-visible {
   </section>
 
   <section class="bk-section" id="press" style="padding-top:0">
-    <div class="inner">
-      <div class="bk-eyebrow" style="text-align:center;">Frequently Asked</div>
-      <h2 class="bk-h2" style="text-align:center; max-width:740px; margin:0 auto 48px;">What <em>readers usually ask</em> before ordering.</h2>
+    <div class="inner bk-section-head">
+      <div class="bk-eyebrow">Frequently Asked</div>
+      <h2 class="bk-h2 loose">What <em>readers usually ask</em> before ordering.</h2>
       <div class="bk-faq">
         <details open>
           <summary>Is this another book about burnout?</summary>
@@ -1195,7 +1235,7 @@ summary:focus-visible {
         <p>"From drift to direction — one honest reckoning at a time."</p>
       </div>
       <div>
-        <h5>The Book</h5>
+        <h3>The Book</h3>
         <ul>
           <li><a href="#chapter">Read Chapter One</a></li>
           <li><a href="https://bookshop.org" target="_blank" rel="noopener noreferrer">Bookshop.org</a></li>
@@ -1205,7 +1245,7 @@ summary:focus-visible {
         </ul>
       </div>
       <div>
-        <h5>Author</h5>
+        <h3>Author</h3>
         <ul>
           <li><a href="#bio">Full bio</a></li>
           <li><a href="#press">Press kit</a></li>
@@ -1214,7 +1254,7 @@ summary:focus-visible {
         </ul>
       </div>
       <div>
-        <h5>Stay in Touch</h5>
+        <h3>Stay in Touch</h3>
         <ul>
           <li><a href="#letter">The Quiet Line letter</a></li>
           <li><a href="https://bsky.app" target="_blank" rel="noopener noreferrer">Bluesky</a></li>
@@ -1329,10 +1369,8 @@ summary:focus-visible {
 
   const findTab = (name) => tabs.find(t => t.dataset.panel === name) || null;
 
-  const activate = (target, opts = {}) => {
-    const { scroll = true, focus = false } = opts;
-    if (!panelById.has(target)) return;
-
+  const swap = (target, opts) => {
+    const { scroll = true, focus = false } = opts || {};
     tabs.forEach(t => {
       const on = t.dataset.panel === target;
       t.classList.toggle('active', on);
@@ -1345,9 +1383,20 @@ summary:focus-visible {
       p.classList.toggle('active', on);
       if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
     });
-
     try { localStorage.setItem('tw-kit-panel', target); } catch {}
     if (scroll) window.scrollTo({ top: 0, behavior: 'instant' });
+    // Reposition the sliding tab indicator after the swap
+    if (typeof positionTabIndicator === 'function') positionTabIndicator();
+  };
+
+  const activate = (target, opts = {}) => {
+    if (!panelById.has(target)) return;
+    // View Transitions API — smooth cross-fade between worlds in supporting browsers
+    if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.startViewTransition(() => swap(target, opts));
+    } else {
+      swap(target, opts);
+    }
   };
 
   tabs.forEach(btn => {
@@ -1410,6 +1459,65 @@ summary:focus-visible {
       const btn = demoForm.querySelector('button[type="submit"]');
       if (input) input.value = '';
       if (btn) btn.textContent = 'Demo accepted — no email sent';
+    });
+  }
+
+  // ───── Sliding underline indicator on the tablist ─────
+  let positionTabIndicator = () => {};
+  if (tablist) {
+    const indicator = document.createElement('span');
+    indicator.className = 'kit-nav-indicator';
+    indicator.setAttribute('aria-hidden', 'true');
+    tablist.appendChild(indicator);
+    positionTabIndicator = () => {
+      const active = tablist.querySelector('button.active');
+      if (!active) return;
+      const r = active.getBoundingClientRect();
+      const tr = tablist.getBoundingClientRect();
+      indicator.style.transform = `translateX(${r.left - tr.left}px)`;
+      indicator.style.width = `${r.width}px`;
+    };
+    positionTabIndicator();
+    window.addEventListener('resize', positionTabIndicator);
+    // Run again after fonts settle so widths are accurate
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(positionTabIndicator);
+    }
+  }
+
+  // ───── Magnetic primary CTA — pulls toward the cursor on hover ─────
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!reduceMotion && isFinePointer) {
+    const RANGE = 110;       // px — pointer distance that begins the pull
+    const STRENGTH = 0.18;   // scales the magnitude — keep it subtle
+    const MAX = 7;           // max px translation
+    document.querySelectorAll('.btn-primary, .lc-btn-primary').forEach(btn => {
+      let raf = 0;
+      const onMove = (e) => {
+        const r = btn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+        const dist = Math.hypot(dx, dy);
+        if (dist > RANGE) return reset();
+        const tx = Math.max(-MAX, Math.min(MAX, dx * STRENGTH));
+        const ty = Math.max(-MAX, Math.min(MAX, dy * STRENGTH));
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          btn.style.transform = `translate(${tx}px, ${ty - 2}px)`;
+        });
+      };
+      const reset = () => {
+        if (raf) cancelAnimationFrame(raf);
+        btn.style.transform = '';
+      };
+      btn.addEventListener('pointerenter', () => window.addEventListener('pointermove', onMove));
+      btn.addEventListener('pointerleave', () => {
+        window.removeEventListener('pointermove', onMove);
+        reset();
+      });
     });
   }
 })();

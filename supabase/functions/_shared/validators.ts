@@ -10,6 +10,8 @@ export const responseSchema = z.object({
   reading_status: z.enum(["just_started", "mid_book", "finished", "came_back"]),
   question_id: z.string().min(1).max(60),
   response_text: z.string().trim().min(1).max(4000),
+  give_to: z.string().trim().max(200).optional().or(z.literal("")),
+  give_to_why: z.string().trim().max(800).optional().or(z.literal("")),
   consent_publish: z.boolean(),
   email: z.string().email().optional().or(z.literal("")),
   website: z.string().max(0).optional(),

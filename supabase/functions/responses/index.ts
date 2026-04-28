@@ -113,6 +113,8 @@ Deno.serve(async (req) => {
     reading_status: parsed.data.reading_status,
     question_id: parsed.data.question_id,
     response_text: parsed.data.response_text,
+    give_to: parsed.data.give_to || null,
+    give_to_why: parsed.data.give_to_why || null,
     consent_publish: parsed.data.consent_publish,
     reader_email: parsed.data.email || null,
     source: "portal",

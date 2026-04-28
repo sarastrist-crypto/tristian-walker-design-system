@@ -1,4 +1,7 @@
-/* Re-export the brand tokens from the design system at repo root.
-   Vite's CSS resolver can follow this relative path, so token edits in
-   colors_and_type.css propagate without a copy step. */
-@import url("../../../colors_and_type.css");
+/* Brand tokens. The source of truth is colors_and_type.css at the repo
+   root — this is the portal's local copy so the Vite build remains
+   self-contained (Vercel's Root Directory build cannot reach files
+   above the portal/ folder). When you edit the root file, run
+   `cp colors_and_type.css portal/src/styles/colors_and_type.css`
+   to re-sync. */
+@import url("./colors_and_type.css");

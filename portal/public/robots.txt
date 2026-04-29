@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://read.thequietlinebook.com/sitemap.xml
+Sitemap: https://readthequietlinebook.com/sitemap.xml

@@ -242,7 +242,7 @@
 | Buffer / testing / live Stripe + Mapbox deploy | | ~3 days |
 | **Total runway** | | **~24-25 days (≈5 weeks)** |
 
-This is ~2 weeks more than the original 3-week estimate. The delta is mostly the AI components, which weren't in the original count but are essential to the "Cobble's AI angle on this pattern" line in the strategy plan.
+This is ~2 weeks more than the original 3-week estimate. The delta is mostly the AI components, which weren't in the original count but are essential to the "Cobbled Works' AI angle on this pattern" line in the strategy plan.
 
 ---
 

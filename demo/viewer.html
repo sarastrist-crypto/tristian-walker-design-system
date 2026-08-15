@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>HyperFrames demo — Title Card Viewer</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: #1a1a1a;
+        overflow: hidden;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: #c4a484;
+      }
+      .stage {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      /* Composition is 1920x1080. Render at native size, scale to fit viewport. */
+      .frame-wrap {
+        width: 1920px;
+        height: 1080px;
+        transform-origin: center center;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+        background: #fdfcf8;
+      }
+      .controls {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      button {
+        background: #bc744e;
+        color: #fdfcf8;
+        border: 0;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font: inherit;
+        text-transform: inherit;
+        letter-spacing: inherit;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #a05e3d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="frame-wrap" id="wrap">
+        <iframe id="frame" src="hyperframes-title-card.html"></iframe>
+      </div>
+    </div>
+    <div class="controls">
+      <span>Quiet Line · Title Card (5.0s)</span>
+      <button id="replay">Replay</button>
+    </div>
+
+    <script>
+      const wrap = document.getElementById("wrap");
+      const frame = document.getElementById("frame");
+      const replay = document.getElementById("replay");
+
+      function fit() {
+        const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080) * 0.94;
+        wrap.style.transform = `scale(${s})`;
+      }
+      window.addEventListener("resize", fit);
+      fit();
+
+      // The HyperFrames player normally drives playback. Without it, the
+      // composition's timeline is paused at t=0 — every element sitting at
+      // its gsap.from() start state (offscreen / invisible). This viewer
+      // grabs the registered timeline and restarts it so you can watch the
+      // entrance choreography in any browser.
+      function play(retries = 30) {
+        const win = frame.contentWindow;
+        const tl = win && win.__timelines && win.__timelines.root;
+        if (!tl) {
+          if (retries > 0) setTimeout(() => play(retries - 1), 100);
+          return;
+        }
+        tl.restart();
+      }
+
+      frame.addEventListener("load", () => play());
+      replay.addEventListener("click", () => play());
+    </script>
+  </body>
+</html>

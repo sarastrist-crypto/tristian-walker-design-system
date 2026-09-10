@@ -90,3 +90,22 @@ death in a few seconds means a spending cap, not your code. These sessions are
 read-only on Actions, so hand Tristian the workflow's "Run workflow" link rather
 than reporting the diagnosis as blocked. Canonical version: the `cobbled-works`
 CLAUDE.md.
+
+## 🪪 Which model is running is CHECKED, never assumed
+
+**Standing operator rule (Tristian, September 10, 2026), every repo, every
+session.** A session carries three model facts that can disagree: the model it
+was **configured** with at creation, the model `session_context` says it is
+**set to run**, and `last_served_model`, which served the most recent turn. A
+runtime fallback moves the third alone, and Tristian can switch models himself
+mid-session, so a session does not always end on the model it began with.
+
+Never state which model is running from a line in the system prompt alone: call
+`get_session` (the claude-code-remote MCP server) with `session_id` omitted and
+report what it says. Never guess a marketing name out of training, which is
+older than the model serving the turn. The commit footer follows the model that
+actually served, so one long session can carry two different `Co-Authored-By`
+lines and that is a true record rather than an inconsistency. **A model
+identifier never goes into a repo beyond that footer**, not in a commit body, a
+PR description, a code comment, or a page. Canonical version: the
+`cobbled-works` CLAUDE.md.

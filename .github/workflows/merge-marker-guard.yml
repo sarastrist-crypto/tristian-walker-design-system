@@ -1,0 +1,34 @@
+name: Merge marker guard
+
+# Fails the build on a git conflict marker left in a tracked file, and on a
+# tracked .json that will not parse.
+#
+# Why it exists: a merge resolved with `git add -A && git commit --no-edit`
+# ships whatever markers were still in the files. Every other check passes,
+# because valid-looking markup with `<<<<<<<` in it is still valid markup, and
+# a JSON that fails to parse fails at runtime rather than at build time.
+#
+# The calibration test runs first. Never trust a check nobody has watched fail
+# on purpose: on its first run it caught that the guard's own header comment
+# contained a block-comment terminator, which made the file unloadable.
+#
+# Ported from cobbled-works/qa/merge-marker-guard.mjs, September 18, 2026.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Calibration test
+        run: node qa/__tests__/merge-marker-guard.test.mjs
+      - name: Scan tracked files
+        run: node qa/merge-marker-guard.mjs
